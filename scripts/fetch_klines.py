@@ -35,7 +35,15 @@ FIFTEEN_DAYS_BACK = int(os.environ.get("FIFTEEN_DAYS_BACK", "730"))
 START = {"1d": "2017-08-01", "4h": "2017-08-01"}
 INTERVAL_MS = {"1d": 86_400_000, "4h": 14_400_000, "15m": 900_000}
 STABLE = {"USDC", "FDUSD", "TUSD", "BUSD", "DAI", "USDP", "USDD", "PYUSD", "EUR", "EURI", "AEUR", "GBP", "TRY", "BRL",
-          "USD1", "XUSD", "USDE", "BFUSD", "RLUSD", "PAXG", "WBTC", "WBETH", "BNSOL"}
+          "USD1", "XUSD", "USDE", "BFUSD", "RLUSD", "PAXG", "WBTC", "WBETH", "BNSOL",
+          "U", "RWUSD", "XAUT"}
+# tokenized equities / ETFs listed on Binance spot (not crypto): excluded
+TOKENIZED = {"QQQB", "GOOGLB", "NVDAB", "TSLAB", "SPCXB", "TQQQB", "SPYB", "AAPLB", "MSFTB", "AMZNB", "METAB", "COINB",
+             "MSTRB", "HOODB", "CRCLB"}
+
+
+def excluded(base: str) -> bool:
+    return base in STABLE or base in TOKENIZED or base.endswith(("UP", "DOWN", "BULL", "BEAR"))
 S = requests.Session()
 S.headers["User-Agent"] = "crypto-market-data (GitHub Actions)"
 
@@ -80,7 +88,7 @@ def universe(base) -> pd.DataFrame:
         if sym not in ok:
             continue
         b = ok[sym]
-        if b in STABLE or b.endswith(("UP", "DOWN", "BULL", "BEAR")):
+        if excluded(b):
             continue
         rows.append((sym, b, float(t["quoteVolume"])))
     df = pd.DataFrame(rows, columns=["symbol", "base", "quote_volume_24h_usdt"]).sort_values("quote_volume_24h_usdt", ascending=False)
@@ -140,6 +148,7 @@ def main() -> int:
     prev_u = PREV / "universe.csv"
     if prev_u.exists():
         old = pd.read_csv(prev_u)
+        old = old[~old.base.astype(str).map(excluded)]  # exclusions apply to earlier members too
         new = uni[~uni.symbol.isin(old.symbol)].assign(added=today)
         u = pd.concat([old, new], ignore_index=True)
     else:
