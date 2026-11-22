@@ -39,7 +39,8 @@ STABLE = {"USDC", "FDUSD", "TUSD", "BUSD", "DAI", "USDP", "USDD", "PYUSD", "EUR"
           "U", "RWUSD", "XAUT"}
 # tokenized equities / ETFs listed on Binance spot (not crypto): excluded
 TOKENIZED = {"QQQB", "GOOGLB", "NVDAB", "TSLAB", "SPCXB", "TQQQB", "SPYB", "AAPLB", "MSFTB", "AMZNB", "METAB", "COINB",
-             "MSTRB", "HOODB", "CRCLB"}
+             "MSTRB", "HOODB", "CRCLB", "SOXLB", "MUB", "SNDKB", "INTCB", "SKHYB", "ANTB", "KORUB"}
+# ASSUMPTION: Binance lists tokenized equities as <TICKER>B. The list is maintained by hand; review universe.csv monthly.
 
 
 def excluded(base: str) -> bool:
