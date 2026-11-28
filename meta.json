@@ -1,0 +1,13 @@
+{
+ "status": "ok",
+ "endpoint": "https://data-api.binance.vision",
+ "built_at": "2026-11-28T16:27:09.731513+00:00",
+ "last_daily_close": "2026-11-27",
+ "symbols": 183,
+ "rows": {
+  "1d": 216621,
+  "4h": 1299876,
+  "15m": 9976791
+ },
+ "fifteen_min_days": 730
+}
